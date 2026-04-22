@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { authRouter } from './routes/auth.routes.js';
 
 export function createApp() {
   const app = express();
@@ -16,7 +17,7 @@ export function createApp() {
     res.json({ ok: true });
   });
 
-  // All routers will be registered below this line in later tasks.
+  app.use('/auth', authRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
