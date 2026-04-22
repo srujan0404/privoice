@@ -3,7 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { syncRouter } from './routes/sync.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { userRouter } from './routes/user.routes.js';
 
 export function createApp() {
   const app = express();
@@ -18,6 +20,8 @@ export function createApp() {
   });
 
   app.use('/auth', authRouter);
+  app.use('/', userRouter);
+  app.use('/', syncRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
