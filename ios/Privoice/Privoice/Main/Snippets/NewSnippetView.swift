@@ -23,8 +23,8 @@ struct NewSnippetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {

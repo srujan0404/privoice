@@ -35,5 +35,7 @@ struct MainTabView: View {
             .tabItem { Label("Tone", systemImage: "face.smiling") }
             .tag(4)
         }
+        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
+        .tint(Color(red: 0.0, green: 0.533, blue: 1.0)) // #0088FF — matches AccentColor explicitly for the tab bar tint
     }
 }

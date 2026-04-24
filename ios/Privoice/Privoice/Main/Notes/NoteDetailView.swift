@@ -92,7 +92,7 @@ struct NoteDetailView: View {
         let trimmedBody = bodyText.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedTitle.isEmpty && trimmedBody.isEmpty {
             onDelete(note)
-        } else {
+        } else if trimmedTitle != note.title || bodyText != note.body {
             var updated = note
             updated.title = trimmedTitle
             updated.body = bodyText

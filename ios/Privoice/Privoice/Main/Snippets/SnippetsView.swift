@@ -17,8 +17,8 @@ struct SnippetsView: View {
                 content
             }
             addButton
-                .padding(.trailing, 20)
-                .padding(.bottom, 84)
+                .padding(.trailing, 24)
+                .padding(.bottom, 24)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)

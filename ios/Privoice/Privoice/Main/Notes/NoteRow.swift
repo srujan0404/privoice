@@ -12,8 +12,12 @@ struct NoteRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
-            NoteThumbnail(size: 56)
-            VStack(alignment: .leading, spacing: 4) {
+            Image("NoteIcon")
+                .resizable()
+                .renderingMode(.original)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56)
+            VStack(alignment: .leading, spacing: 0) {
                 Text(note.displayTitle)
                     .font(AppFont.semibold(17))
                     .foregroundStyle(.primary)
@@ -24,11 +28,12 @@ struct NoteRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 4)
                 }
                 Text(Self.timeFormatter.string(from: note.updatedAt))
                     .font(AppFont.regular(13))
                     .foregroundStyle(Color(.systemGray))
-                    .padding(.top, 2)
+                    .padding(.top, 10) // matches Figma spec (10pt gap before timestamp)
             }
             Spacer(minLength: 8)
             Image(systemName: "chevron.right")

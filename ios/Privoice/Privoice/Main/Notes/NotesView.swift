@@ -16,8 +16,8 @@ struct NotesView: View {
                 content
             }
             addButton
-                .padding(.trailing, 20)
-                .padding(.bottom, 84)
+                .padding(.trailing, 24)
+                .padding(.bottom, 24)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
@@ -85,7 +85,8 @@ struct NotesView: View {
             Image(systemName: "plus")
                 .font(AppFont.bold(24))
                 .foregroundStyle(Color.accentColor)
-                .frame(width: 58, height: 58)
+                .frame(width: 48, height: 56)
+                .rotationEffect(.degrees(-6))
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.accentColor.opacity(0.12))

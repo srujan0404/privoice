@@ -3,12 +3,7 @@ import SwiftUI
 struct SnippetsEmptyView: View {
     var body: some View {
         VStack(spacing: 0) {
-            Spacer().frame(minHeight: 60, maxHeight: 120)
-
-            Image(systemName: "plus.square.on.square")
-                .font(.system(size: 60, weight: .regular))
-                .foregroundStyle(Color.accentColor)
-                .padding(.bottom, 18)
+            Spacer().frame(minHeight: 80, maxHeight: 160)
 
             Text("No Snippets, yet")
                 .font(AppFont.semibold(20))
