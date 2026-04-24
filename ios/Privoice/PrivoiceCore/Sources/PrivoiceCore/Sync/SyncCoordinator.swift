@@ -43,18 +43,26 @@ public final class SyncCoordinator {
         }
     }
 
+    /// Last error from the most recent run (nil on success). Useful for debug UI.
+    public private(set) var lastError: String?
+
     /// Pushes local unsynced changes then pulls anything new from the server.
-    /// Silently no-ops on auth/network errors so the UI still renders local data.
+    /// Swallows errors so the UI still renders local data — but records them
+    /// on `lastError` and prints them to the console so they're diagnosable.
     public func run() async {
         guard !isRunning else { return }
         isRunning = true
         defer { isRunning = false }
 
+        NSLog("[Sync] run() start")
         do {
             try await push()
             try await pull()
+            lastError = nil
+            NSLog("[Sync] OK")
         } catch {
-            // Intentionally swallowed — sync is best-effort.
+            lastError = "\(error)"
+            NSLog("[Sync] FAILED: %@", "\(error)")
         }
     }
 
@@ -63,6 +71,7 @@ public final class SyncCoordinator {
         let unsyncedNotes = try notes.listUnsynced()
         let unsyncedSnippets = try snippets.listUnsynced()
         let unsyncedVocab = try vocab.listUnsynced()
+        NSLog("[Sync] push queue: messages=%d notes=%d snippets=%d vocab=%d", unsyncedMessages.count, unsyncedNotes.count, unsyncedSnippets.count, unsyncedVocab.count)
         guard !unsyncedMessages.isEmpty
             || !unsyncedNotes.isEmpty
             || !unsyncedSnippets.isEmpty
@@ -88,10 +97,12 @@ public final class SyncCoordinator {
         for dto in response.vocab {
             try vocab.upsert(dto.asVocab(syncedAt: syncedAt))
         }
+        NSLog("[Sync] push OK: synced %d records", response.messages.count + response.notes.count + response.snippets.count + response.vocab.count)
     }
 
     private func pull() async throws {
         let since = lastServerTime
+        NSLog("[Sync] pull since=%@", since?.description ?? "nil")
         let response = try await SyncAPI.pull(since: since)
         for dto in response.messages {
             try messages.upsert(dto.asMessage(syncedAt: response.serverTime))
@@ -106,5 +117,6 @@ public final class SyncCoordinator {
             try vocab.upsert(dto.asVocab(syncedAt: response.serverTime))
         }
         lastServerTime = response.serverTime
+        NSLog("[Sync] pull OK: messages=%d notes=%d snippets=%d vocab=%d", response.messages.count, response.notes.count, response.snippets.count, response.vocab.count)
     }
 }

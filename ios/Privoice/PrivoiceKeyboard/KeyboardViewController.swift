@@ -84,12 +84,13 @@ final class KeyboardViewController: KeyboardInputViewController {
             let tone = TonePreference.shared.current
             let inserted: String
             do {
-                let response = try await withTimeout(seconds: 10) {
+                let response = try await withTimeout(seconds: 25) {
                     try await PolishAPI.polish(transcript: rawText, tone: tone)
                 }
                 inserted = response.polishedText
+                log.info("polish OK: \(response.polishedText.count, privacy: .public) chars")
             } catch {
-                log.error("polish failed, falling back to raw: \(error.localizedDescription)")
+                log.error("polish failed, falling back to raw: \(String(describing: error), privacy: .public)")
                 inserted = rawText
             }
             await MainActor.run {

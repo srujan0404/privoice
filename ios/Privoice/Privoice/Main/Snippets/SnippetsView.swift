@@ -13,15 +13,16 @@ struct SnippetsView: View {
                 AppSearchField(text: $viewModel.searchText)
                     .padding(.horizontal, 20)
                     .padding(.top, 4)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, isEmpty ? 32 : 16)
                 content
             }
             addButton
                 .padding(.trailing, 20)
-                .padding(.bottom, 20)
+                .padding(.bottom, 84)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .task {
             viewModel.reload()
             await viewModel.sync()
@@ -42,9 +43,13 @@ struct SnippetsView: View {
         }
     }
 
+    private var isEmpty: Bool {
+        viewModel.snippets.isEmpty && viewModel.searchText.isEmpty
+    }
+
     @ViewBuilder
     private var content: some View {
-        if viewModel.snippets.isEmpty && viewModel.searchText.isEmpty {
+        if isEmpty {
             SnippetsEmptyView()
         } else {
             populatedList
@@ -53,10 +58,8 @@ struct SnippetsView: View {
 
     private var populatedList: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Your Snippets (\(viewModel.totalCount))")
-                    .font(AppFont.semibold(15))
-                    .foregroundStyle(Color(.systemGray))
+            VStack(alignment: .leading, spacing: 6) {
+                SectionTitle(text: "Your Snippets (\(viewModel.totalCount))")
                     .padding(.leading, 20)
 
                 GroupedCard {
@@ -80,7 +83,6 @@ struct SnippetsView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .padding(.top, 4)
             .padding(.bottom, 120)
         }
         .refreshable { await viewModel.sync() }

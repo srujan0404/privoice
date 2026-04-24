@@ -13,11 +13,13 @@ struct NotesEmptyView: View {
                 .frame(width: 120)
 
             Text("No notes, yet")
-                .font(.system(size: 22, weight: .semibold))
+                .font(AppFont.semibold(20))
+                .tracking(-0.4)
+                .foregroundStyle(Color(red: 0x0A / 255.0, green: 0x0A / 255.0, blue: 0x0A / 255.0))
                 .padding(.top, 14)
 
             Text("Start writing your first note")
-                .font(.system(size: 16))
+                .font(AppFont.regular(15))
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
 

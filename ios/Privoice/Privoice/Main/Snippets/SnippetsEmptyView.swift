@@ -11,14 +11,16 @@ struct SnippetsEmptyView: View {
                 .padding(.bottom, 18)
 
             Text("No Snippets, yet")
-                .font(.system(size: 22, weight: .semibold))
+                .font(AppFont.semibold(20))
+                .tracking(-0.4)
+                .foregroundStyle(Color(red: 0x0A / 255.0, green: 0x0A / 255.0, blue: 0x0A / 255.0))
                 .padding(.bottom, 10)
 
             VStack(spacing: 2) {
                 Text("Say it short, Pocket voice types it long.")
                 Text("Add a phrase and what it should expand to.")
             }
-            .font(.system(size: 16))
+            .font(AppFont.regular(15))
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
 

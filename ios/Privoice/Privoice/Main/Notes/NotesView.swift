@@ -12,15 +12,16 @@ struct NotesView: View {
                 AppSearchField(text: $viewModel.searchText)
                     .padding(.horizontal, 20)
                     .padding(.top, 4)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, isEmpty ? 32 : 16)
                 content
             }
             addButton
                 .padding(.trailing, 20)
-                .padding(.bottom, 20)
+                .padding(.bottom, 84)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .task {
             viewModel.reload()
             await viewModel.sync()
@@ -34,9 +35,13 @@ struct NotesView: View {
         }
     }
 
+    private var isEmpty: Bool {
+        viewModel.notes.isEmpty && viewModel.searchText.isEmpty
+    }
+
     @ViewBuilder
     private var content: some View {
-        if viewModel.notes.isEmpty && viewModel.searchText.isEmpty {
+        if isEmpty {
             NotesEmptyView()
         } else {
             populatedList
@@ -45,12 +50,10 @@ struct NotesView: View {
 
     private var populatedList: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 22) {
+            LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(viewModel.groupedSections, id: \.title) { section in
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(section.title)
-                            .font(AppFont.semibold(15))
-                            .foregroundStyle(Color(.systemGray))
+                    VStack(alignment: .leading, spacing: 6) {
+                        SectionTitle(text: section.title)
                             .padding(.leading, 20)
 
                         GroupedCard {
@@ -69,7 +72,6 @@ struct NotesView: View {
                     }
                 }
             }
-            .padding(.top, 4)
             .padding(.bottom, 120)
         }
         .refreshable { await viewModel.sync() }

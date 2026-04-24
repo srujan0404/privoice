@@ -17,7 +17,12 @@ public final class TokenStore: @unchecked Sendable {
 
     public static let shared = TokenStore()
 
-    public init(service: String = "com.privoice.tokens", accessGroup: String? = AppGroup.keychainAccessGroup) {
+    /// `accessGroup` defaults to nil on purpose. Both the app and keyboard entitlements
+    /// declare exactly one `keychain-access-groups` entry (`$(AppIdentifierPrefix)com.privoice.shared`),
+    /// so iOS uses it automatically for SecItemAdd and searches all accessible groups for
+    /// SecItemCopyMatching. Passing the literal `"com.privoice.shared"` string would
+    /// mismatch the team-ID-prefixed runtime value and silently drop writes on simulator.
+    public init(service: String = "com.privoice.tokens", accessGroup: String? = nil) {
         self.service = service
         self.accessGroup = accessGroup
     }

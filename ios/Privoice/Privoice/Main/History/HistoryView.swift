@@ -10,20 +10,25 @@ struct HistoryView: View {
             AppSearchField(text: $viewModel.searchText)
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
-                .padding(.bottom, 12)
+                .padding(.bottom, isEmpty ? 32 : 16)
             content
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .task {
             viewModel.reload()
             await viewModel.sync()
         }
     }
 
+    private var isEmpty: Bool {
+        viewModel.messages.isEmpty && viewModel.searchText.isEmpty
+    }
+
     @ViewBuilder
     private var content: some View {
-        if viewModel.messages.isEmpty && viewModel.searchText.isEmpty {
+        if isEmpty {
             HistoryEmptyView()
         } else {
             populatedList
@@ -32,12 +37,10 @@ struct HistoryView: View {
 
     private var populatedList: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 22) {
+            LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(viewModel.groupedSections, id: \.title) { section in
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(section.title)
-                            .font(AppFont.semibold(15))
-                            .foregroundStyle(Color(.systemGray))
+                    VStack(alignment: .leading, spacing: 6) {
+                        SectionTitle(text: section.title)
                             .padding(.leading, 20)
 
                         GroupedCard {
@@ -53,7 +56,6 @@ struct HistoryView: View {
                     }
                 }
             }
-            .padding(.top, 4)
             .padding(.bottom, 120)
         }
         .refreshable { await viewModel.sync() }
