@@ -15,18 +15,18 @@ struct NoteRow: View {
             NoteThumbnail(size: 56)
             VStack(alignment: .leading, spacing: 4) {
                 Text(note.displayTitle)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(AppFont.semibold(17))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 if !note.preview.isEmpty {
                     Text(note.preview)
-                        .font(.system(size: 15))
+                        .font(AppFont.regular(15))
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Text(Self.timeFormatter.string(from: note.updatedAt))
-                    .font(.system(size: 13))
+                    .font(AppFont.regular(13))
                     .foregroundStyle(Color(.systemGray))
                     .padding(.top, 2)
             }

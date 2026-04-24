@@ -5,49 +5,39 @@ struct ToneView: View {
     @State private var selectedTone: Tone = TonePreference.shared.current
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("General Tone Preferences")
-                        .font(.system(size: 17, weight: .semibold))
-                    Text("Pocket voice sounds like this everywhere.")
-                        .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
-                }
-
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(Tone.allCases) { tone in
-                            ToneCardView(
-                                tone: tone,
-                                isSelected: selectedTone == tone,
-                                onTap: { selectTone(tone) }
-                            )
-                        }
+        VStack(alignment: .leading, spacing: 0) {
+            ScreenHeader(title: "Tone")
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("General Tone Preferences")
+                            .font(AppFont.semibold(17))
+                        Text("Pocket voice sounds like this everywhere.")
+                            .font(AppFont.regular(14))
+                            .foregroundStyle(.secondary)
                     }
-                    .padding(.vertical, 2)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 24)
-        }
-        .navigationTitle("Tone")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { avatar }
-        }
-    }
+                    .padding(.horizontal, 20)
 
-    private var avatar: some View {
-        Circle()
-            .fill(Color(.systemGray4))
-            .frame(width: 32, height: 32)
-            .overlay(
-                Image(systemName: "person.fill")
-                    .font(.system(size: 16))
-                    .foregroundStyle(.white)
-            )
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(Tone.allCases) { tone in
+                                ToneCardView(
+                                    tone: tone,
+                                    isSelected: selectedTone == tone,
+                                    onTap: { selectTone(tone) }
+                                )
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 2)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 120)
+            }
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private func selectTone(_ tone: Tone) {

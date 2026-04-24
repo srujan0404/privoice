@@ -7,29 +7,22 @@ struct NotesView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            Group {
-                if viewModel.notes.isEmpty && viewModel.searchText.isEmpty {
-                    NotesEmptyView()
-                } else {
-                    list
-                }
+            VStack(spacing: 0) {
+                ScreenHeader(title: "Notes")
+                AppSearchField(text: $viewModel.searchText)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 4)
+                    .padding(.bottom, 12)
+                content
             }
-            .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search")
-
             addButton
                 .padding(.trailing, 20)
                 .padding(.bottom, 20)
         }
-        .navigationTitle("Notes")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { avatar }
-        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             viewModel.reload()
-            await viewModel.sync()
-        }
-        .refreshable {
             await viewModel.sync()
         }
         .navigationDestination(item: $activeNote) { note in
@@ -41,33 +34,45 @@ struct NotesView: View {
         }
     }
 
-    private var list: some View {
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.notes.isEmpty && viewModel.searchText.isEmpty {
+            NotesEmptyView()
+        } else {
+            populatedList
+        }
+    }
+
+    private var populatedList: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
+            LazyVStack(alignment: .leading, spacing: 22) {
                 ForEach(viewModel.groupedSections, id: \.title) { section in
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text(section.title)
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                            .padding(.bottom, 8)
-                        VStack(spacing: 0) {
+                            .font(AppFont.semibold(15))
+                            .foregroundStyle(Color(.systemGray))
+                            .padding(.leading, 20)
+
+                        GroupedCard {
                             ForEach(Array(section.items.enumerated()), id: \.element.id) { index, note in
                                 Button(action: { activeNote = note }) {
                                     NoteRow(note: note)
+                                        .padding(.horizontal, 16)
                                 }
                                 .buttonStyle(.plain)
                                 if index < section.items.count - 1 {
-                                    Divider()
+                                    CardDivider()
                                 }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 100)
+            .padding(.top, 4)
+            .padding(.bottom, 120)
         }
+        .refreshable { await viewModel.sync() }
     }
 
     private var addButton: some View {
@@ -76,7 +81,7 @@ struct NotesView: View {
             activeNote = note
         }) {
             Image(systemName: "plus")
-                .font(.system(size: 24, weight: .semibold))
+                .font(AppFont.bold(24))
                 .foregroundStyle(Color.accentColor)
                 .frame(width: 58, height: 58)
                 .background(
@@ -89,20 +94,5 @@ struct NotesView: View {
                 )
         }
         .buttonStyle(.plain)
-    }
-
-    private var avatar: some View {
-        Menu {
-            SignOutButton()
-        } label: {
-            Circle()
-                .fill(Color(.systemGray4))
-                .frame(width: 32, height: 32)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(.white)
-                )
-        }
     }
 }

@@ -8,6 +8,8 @@ public final class SyncCoordinator {
 
     private let messages: MessageRepository
     private let notes: NoteRepository
+    private let snippets: SnippetRepository
+    private let vocab: VocabRepository
     private let defaults: UserDefaults
     private let lastServerTimeKey = "sync.lastServerTime"
 
@@ -16,10 +18,14 @@ public final class SyncCoordinator {
     public init(
         messages: MessageRepository = .shared,
         notes: NoteRepository = .shared,
+        snippets: SnippetRepository = .shared,
+        vocab: VocabRepository = .shared,
         defaults: UserDefaults = AppGroup.userDefaults
     ) {
         self.messages = messages
         self.notes = notes
+        self.snippets = snippets
+        self.vocab = vocab
         self.defaults = defaults
     }
 
@@ -55,15 +61,32 @@ public final class SyncCoordinator {
     private func push() async throws {
         let unsyncedMessages = try messages.listUnsynced()
         let unsyncedNotes = try notes.listUnsynced()
-        guard !unsyncedMessages.isEmpty || !unsyncedNotes.isEmpty else { return }
+        let unsyncedSnippets = try snippets.listUnsynced()
+        let unsyncedVocab = try vocab.listUnsynced()
+        guard !unsyncedMessages.isEmpty
+            || !unsyncedNotes.isEmpty
+            || !unsyncedSnippets.isEmpty
+            || !unsyncedVocab.isEmpty
+        else { return }
 
-        let response = try await SyncAPI.push(messages: unsyncedMessages, notes: unsyncedNotes)
+        let response = try await SyncAPI.push(
+            messages: unsyncedMessages,
+            notes: unsyncedNotes,
+            snippets: unsyncedSnippets,
+            vocab: unsyncedVocab
+        )
         let syncedAt = response.serverTime
         for dto in response.messages {
             try messages.upsert(dto.asMessage(syncedAt: syncedAt))
         }
         for dto in response.notes {
             try notes.upsert(dto.asNote(syncedAt: syncedAt))
+        }
+        for dto in response.snippets {
+            try snippets.upsert(dto.asSnippet(syncedAt: syncedAt))
+        }
+        for dto in response.vocab {
+            try vocab.upsert(dto.asVocab(syncedAt: syncedAt))
         }
     }
 
@@ -75,6 +98,12 @@ public final class SyncCoordinator {
         }
         for dto in response.notes {
             try notes.upsert(dto.asNote(syncedAt: response.serverTime))
+        }
+        for dto in response.snippets {
+            try snippets.upsert(dto.asSnippet(syncedAt: response.serverTime))
+        }
+        for dto in response.vocab {
+            try vocab.upsert(dto.asVocab(syncedAt: response.serverTime))
         }
         lastServerTime = response.serverTime
     }

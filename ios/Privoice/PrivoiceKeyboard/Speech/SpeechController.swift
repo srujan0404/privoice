@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import Speech
+import PrivoiceCore
 
 enum SpeechError: Error {
     case recognizerUnavailable
@@ -21,6 +22,12 @@ final class SpeechController {
     private var isRestarting = false
     private var isStopped = true
 
+    private var activeSnippets: [Snippet] = []
+    private var snippetsVersion: Int = -1
+
+    private var activeVocabStrings: [String] = []
+    private var vocabVersion: Int = -1
+
     var isRunning: Bool { audioEngine.isRunning }
 
     init(buffer: TranscriptBuffer, levelProvider: AudioLevelProvider) {
@@ -30,6 +37,8 @@ final class SpeechController {
 
     func start() throws {
         isStopped = false
+        reloadSnippetsIfNeeded()
+        reloadVocabIfNeeded()
         recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         guard let recognizer, recognizer.isAvailable else {
             throw SpeechError.recognizerUnavailable
@@ -51,6 +60,7 @@ final class SpeechController {
         isStopped = true
         currentTaskID = nil
         buffer.finalizePartial()
+        applySnippetExpansion()
         task?.cancel()
         task = nil
         request?.endAudio()
@@ -59,6 +69,48 @@ final class SpeechController {
         if audioEngine.isRunning { audioEngine.stop() }
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         levelProvider.reset()
+    }
+
+    /// Applies the loaded snippet set to `buffer.finalized`. Called after each finalize
+    /// and at stop(). No-ops when nothing changes, so partials stay visually stable.
+    private func applySnippetExpansion() {
+        reloadSnippetsIfNeeded()
+        guard !activeSnippets.isEmpty else { return }
+        let current = buffer.full
+        let expanded = SnippetExpander.expand(current, using: activeSnippets)
+        if expanded != current {
+            buffer.overwrite(expanded)
+        }
+    }
+
+    /// Cheap cross-process cache check — reads a single Int from the shared App
+    /// Group UserDefaults and only hits SQLite when the version has changed.
+    private func reloadSnippetsIfNeeded() {
+        let latest = SnippetRepository.shared.currentVersion
+        if latest != snippetsVersion {
+            activeSnippets = (try? SnippetRepository.shared.listActive()) ?? []
+            snippetsVersion = latest
+        }
+    }
+
+    /// Loads the vocab set and flattens it into the list of strings that
+    /// `SFSpeechAudioBufferRecognitionRequest.contextualStrings` takes.
+    /// Both `word` and `phonetic` are included so the recognizer can bias
+    /// toward either form.
+    private func reloadVocabIfNeeded() {
+        let latest = VocabRepository.shared.currentVersion
+        if latest != vocabVersion {
+            let entries = (try? VocabRepository.shared.listActive()) ?? []
+            var strings: [String] = []
+            for entry in entries {
+                strings.append(entry.word)
+                if let phonetic = entry.phonetic, !phonetic.isEmpty {
+                    strings.append(phonetic)
+                }
+            }
+            activeVocabStrings = strings
+            vocabVersion = latest
+        }
     }
 
     private func startAudioCapture() {
@@ -77,9 +129,13 @@ final class SpeechController {
     private func startRecognitionTask(recognizer: SFSpeechRecognizer) throws {
         let id = UUID()
         currentTaskID = id
+        reloadVocabIfNeeded()
         let req = SFSpeechAudioBufferRecognitionRequest()
         req.requiresOnDeviceRecognition = true
         req.shouldReportPartialResults = true
+        if !activeVocabStrings.isEmpty {
+            req.contextualStrings = activeVocabStrings
+        }
         self.request = req
 
         task = recognizer.recognitionTask(with: req) { [weak self] result, error in
@@ -102,6 +158,7 @@ final class SpeechController {
 
             if result.isFinal {
                 buffer.finalizePartial()
+                applySnippetExpansion()
                 if !isRestarting, audioEngine.isRunning {
                     restartRecognition(with: recognizer)
                 }

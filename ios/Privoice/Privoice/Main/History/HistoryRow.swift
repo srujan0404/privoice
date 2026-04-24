@@ -13,22 +13,20 @@ struct HistoryRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(message.polishedText)
-                .font(.system(size: 16))
+                .font(AppFont.regular(16))
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Text(message.tone.displayName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(AppFont.medium(12))
                     .foregroundStyle(.secondary)
                 Spacer()
                 Text(Self.timeFormatter.string(from: message.createdAt))
-                    .font(.system(size: 12))
+                    .font(AppFont.regular(12))
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray6), in: .rect(cornerRadius: 14))
+        .padding(.vertical, 14)
     }
 }

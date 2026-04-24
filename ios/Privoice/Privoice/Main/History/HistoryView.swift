@@ -5,62 +5,57 @@ struct HistoryView: View {
     @StateObject private var viewModel = HistoryViewModel()
 
     var body: some View {
-        Group {
-            if viewModel.messages.isEmpty && viewModel.searchText.isEmpty {
-                HistoryEmptyView()
-            } else {
-                list
-            }
+        VStack(spacing: 0) {
+            ScreenHeader(title: "History")
+            AppSearchField(text: $viewModel.searchText)
+                .padding(.horizontal, 20)
+                .padding(.top, 4)
+                .padding(.bottom, 12)
+            content
         }
-        .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search")
-        .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { avatar }
-        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             viewModel.reload()
             await viewModel.sync()
         }
-        .refreshable {
-            await viewModel.sync()
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.messages.isEmpty && viewModel.searchText.isEmpty {
+            HistoryEmptyView()
+        } else {
+            populatedList
         }
     }
 
-    private var list: some View {
+    private var populatedList: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 18, pinnedViews: []) {
+            LazyVStack(alignment: .leading, spacing: 22) {
                 ForEach(viewModel.groupedSections, id: \.title) { section in
                     VStack(alignment: .leading, spacing: 10) {
                         Text(section.title)
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                        VStack(spacing: 10) {
-                            ForEach(section.items) { message in
+                            .font(AppFont.semibold(15))
+                            .foregroundStyle(Color(.systemGray))
+                            .padding(.leading, 20)
+
+                        GroupedCard {
+                            ForEach(Array(section.items.enumerated()), id: \.element.id) { index, message in
                                 HistoryRow(message: message)
+                                    .padding(.horizontal, 16)
+                                if index < section.items.count - 1 {
+                                    CardDivider()
+                                }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 100)
+            .padding(.top, 4)
+            .padding(.bottom, 120)
         }
-    }
-
-    private var avatar: some View {
-        Menu {
-            SignOutButton()
-        } label: {
-            Circle()
-                .fill(Color(.systemGray4))
-                .frame(width: 32, height: 32)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(.white)
-                )
-        }
+        .refreshable { await viewModel.sync() }
     }
 }

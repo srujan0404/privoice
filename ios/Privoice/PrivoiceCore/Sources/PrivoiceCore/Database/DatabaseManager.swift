@@ -59,6 +59,34 @@ public final class DatabaseManager: @unchecked Sendable {
             try db.create(indexOn: "notes", columns: ["syncedAt"])
         }
 
+        migrator.registerMigration("v4_snippets") { db in
+            try db.create(table: "snippets") { t in
+                t.column("clientId", .text).primaryKey()
+                t.column("trigger", .text).notNull()
+                t.column("expansion", .text).notNull()
+                t.column("createdAt", .datetime).notNull()
+                t.column("updatedAt", .datetime).notNull()
+                t.column("deletedAt", .datetime)
+                t.column("syncedAt", .datetime)
+            }
+            try db.create(indexOn: "snippets", columns: ["updatedAt"])
+            try db.create(indexOn: "snippets", columns: ["syncedAt"])
+        }
+
+        migrator.registerMigration("v5_vocab") { db in
+            try db.create(table: "vocab") { t in
+                t.column("clientId", .text).primaryKey()
+                t.column("word", .text).notNull()
+                t.column("phonetic", .text)
+                t.column("createdAt", .datetime).notNull()
+                t.column("updatedAt", .datetime).notNull()
+                t.column("deletedAt", .datetime)
+                t.column("syncedAt", .datetime)
+            }
+            try db.create(indexOn: "vocab", columns: ["updatedAt"])
+            try db.create(indexOn: "vocab", columns: ["syncedAt"])
+        }
+
         try migrator.migrate(dbPool)
     }
 }

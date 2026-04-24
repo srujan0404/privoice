@@ -18,13 +18,13 @@ struct MainTabView: View {
             .tag(1)
 
             NavigationStack {
-                VocabPlaceholder().navigationTitle("Vocab")
+                VocabView()
             }
             .tabItem { Label("Vocab", systemImage: "character.book.closed") }
             .tag(2)
 
             NavigationStack {
-                SnippetsPlaceholder().navigationTitle("Snippets")
+                SnippetsView()
             }
             .tabItem { Label("Snippets", systemImage: "scissors") }
             .tag(3)
