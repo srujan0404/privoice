@@ -10,6 +10,7 @@
 		CD0BB52C2F9972E400AE5074 /* PrivoiceKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CD0BB5252F9972E400AE5074 /* PrivoiceKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CD0BB5352F99752600AE5074 /* PrivoiceCore in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB5342F99752600AE5074 /* PrivoiceCore */; };
 		CD0BB5372F99754400AE5074 /* PrivoiceCore in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB5362F99754400AE5074 /* PrivoiceCore */; };
+		CD0BB55D2F9AB7CE00AE5074 /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB55C2F9AB7CE00AE5074 /* KeyboardKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD0BB55D2F9AB7CE00AE5074 /* KeyboardKit in Frameworks */,
 				CD0BB5352F99752600AE5074 /* PrivoiceCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -161,6 +163,7 @@
 			name = Privoice;
 			packageProductDependencies = (
 				CD0BB5342F99752600AE5074 /* PrivoiceCore */,
+				CD0BB55C2F9AB7CE00AE5074 /* KeyboardKit */,
 			);
 			productName = Privoice;
 			productReference = CD97577D2F99706B001A428C /* Privoice.app */;
@@ -193,6 +196,9 @@
 			);
 			mainGroup = CD9757742F99706B001A428C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CD0BB55B2F9AB7CE00AE5074 /* XCRemoteSwiftPackageReference "KeyboardKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CD97577E2F99706B001A428C /* Products */;
 			projectDirPath = "";
@@ -546,6 +552,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		CD0BB55B2F9AB7CE00AE5074 /* XCRemoteSwiftPackageReference "KeyboardKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/KeyboardKit/KeyboardKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		CD0BB5342F99752600AE5074 /* PrivoiceCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -554,6 +571,11 @@
 		CD0BB5362F99754400AE5074 /* PrivoiceCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PrivoiceCore;
+		};
+		CD0BB55C2F9AB7CE00AE5074 /* KeyboardKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0BB55B2F9AB7CE00AE5074 /* XCRemoteSwiftPackageReference "KeyboardKit" */;
+			productName = KeyboardKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

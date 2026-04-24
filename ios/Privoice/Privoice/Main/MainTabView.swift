@@ -32,7 +32,7 @@ struct MainTabView: View {
             .tag(3)
 
             NavigationStack {
-                TonePlaceholder().navigationTitle("Tone")
+                ToneView()
             }
             .tabItem { Label("Tone", systemImage: "face.smiling") }
             .tag(4)
