@@ -35,13 +35,34 @@ public final class APIClient: @unchecked Sendable {
         self.tokenStore = tokenStore
 
         let dec = JSONDecoder()
-        dec.dateDecodingStrategy = .iso8601
+        dec.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let raw = try container.decode(String.self)
+            if let date = APIClient.iso8601WithMillis.date(from: raw) { return date }
+            if let date = APIClient.iso8601Plain.date(from: raw) { return date }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO-8601 date: \(raw)")
+        }
         self.decoder = dec
 
         let enc = JSONEncoder()
-        enc.dateEncodingStrategy = .iso8601
+        enc.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(APIClient.iso8601WithMillis.string(from: date))
+        }
         self.encoder = enc
     }
+
+    private static let iso8601WithMillis: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+
+    private static let iso8601Plain: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
 
     /// Public request — authenticated endpoint. Handles 401 refresh + retry once.
     public func authed<Response: Decodable>(

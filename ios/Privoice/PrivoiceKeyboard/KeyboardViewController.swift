@@ -97,6 +97,23 @@ final class KeyboardViewController: KeyboardInputViewController {
                 self.appState.buffer.clear()
                 self.appState.phase = .idle
             }
+            self.recordMessage(raw: rawText, polished: inserted, tone: tone)
+        }
+    }
+
+    private nonisolated func recordMessage(raw: String, polished: String, tone: Tone) {
+        let now = Date()
+        let message = Message(
+            polishedText: polished,
+            rawTranscript: raw,
+            toneUsed: tone,
+            createdAt: now,
+            updatedAt: now
+        )
+        do {
+            try MessageRepository.shared.insert(message)
+        } catch {
+            log.error("history write failed: \(error.localizedDescription)")
         }
     }
 

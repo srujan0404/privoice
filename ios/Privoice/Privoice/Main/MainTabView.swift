@@ -6,15 +6,13 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationStack {
-                HistoryPlaceholder()
-                    .navigationTitle("History")
-                    .toolbar { ToolbarItem(placement: .topBarTrailing) { SignOutButton() } }
+                HistoryView()
             }
             .tabItem { Label("History", systemImage: "paperplane") }
             .tag(0)
 
             NavigationStack {
-                NotesPlaceholder().navigationTitle("Notes")
+                NotesView()
             }
             .tabItem { Label("Notes", systemImage: "doc.text") }
             .tag(1)

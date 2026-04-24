@@ -24,9 +24,39 @@ public final class DatabaseManager: @unchecked Sendable {
     private func runMigrations() throws {
         var migrator = DatabaseMigrator()
 
-        // Sub-project 1: no tables yet. This empty migration just confirms the migrator runs.
         migrator.registerMigration("v1_bootstrap") { _ in
-            // Intentionally empty — real tables land in Sub-project 3.
+            // Intentionally empty — real tables land in later migrations.
+        }
+
+        migrator.registerMigration("v2_messages") { db in
+            try db.create(table: "messages") { t in
+                t.column("clientId", .text).primaryKey()
+                t.column("polishedText", .text).notNull()
+                t.column("rawTranscript", .text).notNull()
+                t.column("appBundleId", .text).notNull().defaults(to: "")
+                t.column("appName", .text).notNull().defaults(to: "")
+                t.column("toneUsed", .text).notNull()
+                t.column("createdAt", .datetime).notNull()
+                t.column("updatedAt", .datetime).notNull()
+                t.column("deletedAt", .datetime)
+                t.column("syncedAt", .datetime)
+            }
+            try db.create(indexOn: "messages", columns: ["createdAt"])
+            try db.create(indexOn: "messages", columns: ["syncedAt"])
+        }
+
+        migrator.registerMigration("v3_notes") { db in
+            try db.create(table: "notes") { t in
+                t.column("clientId", .text).primaryKey()
+                t.column("title", .text).notNull().defaults(to: "")
+                t.column("body", .text).notNull().defaults(to: "")
+                t.column("createdAt", .datetime).notNull()
+                t.column("updatedAt", .datetime).notNull()
+                t.column("deletedAt", .datetime)
+                t.column("syncedAt", .datetime)
+            }
+            try db.create(indexOn: "notes", columns: ["updatedAt"])
+            try db.create(indexOn: "notes", columns: ["syncedAt"])
         }
 
         try migrator.migrate(dbPool)
