@@ -68,10 +68,11 @@ public final class APIClient: @unchecked Sendable {
     public func authed<Response: Decodable>(
         _ method: String,
         _ path: String,
+        queryItems: [URLQueryItem]? = nil,
         body: Encodable? = nil,
         response: Response.Type
     ) async throws -> Response {
-        let request = try buildRequest(method: method, path: path, body: body, authed: true)
+        let request = try buildRequest(method: method, path: path, queryItems: queryItems, body: body, authed: true)
         return try await send(request, response: Response.self, allowRefresh: true)
     }
 
@@ -79,10 +80,11 @@ public final class APIClient: @unchecked Sendable {
     public func unauthed<Response: Decodable>(
         _ method: String,
         _ path: String,
+        queryItems: [URLQueryItem]? = nil,
         body: Encodable? = nil,
         response: Response.Type
     ) async throws -> Response {
-        let request = try buildRequest(method: method, path: path, body: body, authed: false)
+        let request = try buildRequest(method: method, path: path, queryItems: queryItems, body: body, authed: false)
         return try await send(request, response: Response.self, allowRefresh: false)
     }
 
@@ -91,17 +93,31 @@ public final class APIClient: @unchecked Sendable {
     public func unauthedEmpty(
         _ method: String,
         _ path: String,
+        queryItems: [URLQueryItem]? = nil,
         body: Encodable? = nil
     ) async throws -> Void {
         struct Empty: Decodable {}
-        let request = try buildRequest(method: method, path: path, body: body, authed: false)
+        let request = try buildRequest(method: method, path: path, queryItems: queryItems, body: body, authed: false)
         _ = try await send(request, response: Empty.self, allowRefresh: false)
     }
 
     // MARK: - Internals
 
-    private func buildRequest(method: String, path: String, body: Encodable?, authed: Bool) throws -> URLRequest {
-        let url = Config.baseURL.appendingPathComponent(path)
+    private func buildRequest(method: String, path: String, queryItems: [URLQueryItem]?, body: Encodable?, authed: Bool) throws -> URLRequest {
+        let pathURL = Config.baseURL.appendingPathComponent(path)
+        let url: URL
+        if let queryItems, !queryItems.isEmpty {
+            guard var components = URLComponents(url: pathURL, resolvingAgainstBaseURL: false) else {
+                throw APIError.network("Invalid URL for path: \(path)")
+            }
+            components.queryItems = queryItems
+            guard let built = components.url else {
+                throw APIError.network("Invalid URL for path: \(path)")
+            }
+            url = built
+        } else {
+            url = pathURL
+        }
         var req = URLRequest(url: url, timeoutInterval: Config.requestTimeout)
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -36,7 +36,7 @@ public struct MessageDTO: Codable, Sendable {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deletedAt: deletedAt,
-            syncedAt: syncedAt
+            syncedAt: max(syncedAt, updatedAt)
         )
     }
 }
@@ -66,7 +66,7 @@ public struct NoteDTO: Codable, Sendable {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deletedAt: deletedAt,
-            syncedAt: syncedAt
+            syncedAt: max(syncedAt, updatedAt)
         )
     }
 }
@@ -96,7 +96,7 @@ public struct SnippetDTO: Codable, Sendable {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deletedAt: deletedAt,
-            syncedAt: syncedAt
+            syncedAt: max(syncedAt, updatedAt)
         )
     }
 }
@@ -126,7 +126,7 @@ public struct VocabDTO: Codable, Sendable {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deletedAt: deletedAt,
-            syncedAt: syncedAt
+            syncedAt: max(syncedAt, updatedAt)
         )
     }
 }
@@ -160,13 +160,17 @@ public struct SyncPushResponse: Codable, Sendable {
 
 public enum SyncAPI {
     public static func pull(since: Date? = nil) async throws -> SyncPullResponse {
-        var path = "sync"
+        var queryItems: [URLQueryItem]?
         if let since {
             let iso = ISO8601DateFormatter().string(from: since)
-            let escaped = iso.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? iso
-            path += "?since=\(escaped)"
+            queryItems = [URLQueryItem(name: "since", value: iso)]
         }
-        return try await APIClient.shared.authed("GET", path, response: SyncPullResponse.self)
+        return try await APIClient.shared.authed(
+            "GET",
+            "sync",
+            queryItems: queryItems,
+            response: SyncPullResponse.self
+        )
     }
 
     public static func push(

@@ -67,11 +67,17 @@ public final class SyncCoordinator {
     }
 
     private func push() async throws {
-        let unsyncedMessages = try messages.listUnsynced()
-        let unsyncedNotes = try notes.listUnsynced()
-        let unsyncedSnippets = try snippets.listUnsynced()
-        let unsyncedVocab = try vocab.listUnsynced()
-        NSLog("[Sync] push queue: messages=%d notes=%d snippets=%d vocab=%d", unsyncedMessages.count, unsyncedNotes.count, unsyncedSnippets.count, unsyncedVocab.count)
+        let rawMessages = try messages.listUnsynced()
+        let rawNotes = try notes.listUnsynced()
+        let rawSnippets = try snippets.listUnsynced()
+        let rawVocab = try vocab.listUnsynced()
+        NSLog("[Sync] push queue: messages=%d notes=%d snippets=%d vocab=%d", rawMessages.count, rawNotes.count, rawSnippets.count, rawVocab.count)
+
+        let unsyncedMessages = rawMessages.filter { Self.assertValidClientId($0.clientId, kind: "message") }
+        let unsyncedNotes = rawNotes.filter { Self.assertValidClientId($0.clientId, kind: "note") }
+        let unsyncedSnippets = rawSnippets.filter { Self.assertValidClientId($0.clientId, kind: "snippet") }
+        let unsyncedVocab = rawVocab.filter { Self.assertValidClientId($0.clientId, kind: "vocab") }
+
         guard !unsyncedMessages.isEmpty
             || !unsyncedNotes.isEmpty
             || !unsyncedSnippets.isEmpty
@@ -118,5 +124,19 @@ public final class SyncCoordinator {
         }
         lastServerTime = response.serverTime
         NSLog("[Sync] pull OK: messages=%d notes=%d snippets=%d vocab=%d", response.messages.count, response.notes.count, response.snippets.count, response.vocab.count)
+    }
+
+    private static let uuidV4Regex = try! NSRegularExpression(
+        pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        options: [.caseInsensitive]
+    )
+
+    private static func assertValidClientId(_ clientId: String, kind: String) -> Bool {
+        let range = NSRange(clientId.startIndex..., in: clientId)
+        let ok = uuidV4Regex.firstMatch(in: clientId, options: [], range: range) != nil
+        if !ok {
+            NSLog("[Sync] dropping %@ with non-v4 clientId from push: %@", kind, clientId)
+        }
+        return ok
     }
 }
