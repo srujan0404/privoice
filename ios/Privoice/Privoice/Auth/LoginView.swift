@@ -6,17 +6,15 @@ struct LoginView: View {
     @State private var vm: AuthViewModel?
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if let vm {
-                    form(vm: vm)
-                } else {
-                    ProgressView()
-                }
+        Group {
+            if let vm {
+                form(vm: vm)
+            } else {
+                ProgressView()
             }
-            .navigationTitle("Privoice")
-            .navigationBarTitleDisplayMode(.large)
         }
+        .navigationTitle("Privoice")
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             if vm == nil {
                 vm = AuthViewModel { response in

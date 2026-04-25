@@ -2,6 +2,8 @@ import Foundation
 import Observation
 import PrivoiceCore
 
+private let onboardingDoneKey = "privoice.hasCompletedOnboarding"
+
 @Observable
 @MainActor
 public final class AppState {
@@ -12,6 +14,15 @@ public final class AppState {
     }
 
     public var authStatus: AuthStatus = .checking
+
+    /// Persisted flag — flips to true once the user finishes the onboarding flow
+    /// (welcome → keyboard setup → mic perms → demo dictation). Read on init from
+    /// UserDefaults so a returning user skips straight to the main tab view.
+    public var hasCompletedOnboarding: Bool = UserDefaults.standard.bool(forKey: onboardingDoneKey) {
+        didSet {
+            UserDefaults.standard.set(hasCompletedOnboarding, forKey: onboardingDoneKey)
+        }
+    }
 
     public init() {}
 

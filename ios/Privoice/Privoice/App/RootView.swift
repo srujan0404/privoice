@@ -9,9 +9,13 @@ struct RootView: View {
             ProgressView()
                 .controlSize(.large)
         case .unauthenticated:
-            LoginView()
+            WelcomeView()
         case .authenticated:
-            MainTabView()
+            if appState.hasCompletedOnboarding {
+                MainTabView()
+            } else {
+                OnboardingFlow()
+            }
         }
     }
 }
