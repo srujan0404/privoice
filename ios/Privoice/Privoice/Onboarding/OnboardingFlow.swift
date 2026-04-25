@@ -7,7 +7,7 @@ import SwiftUI
 /// `RootView` to swap in `MainTabView`.
 struct OnboardingFlow: View {
     @Environment(AppState.self) private var appState
-    @State private var step: Step = .activateVoice
+    @State private var step: Step = .keyboardSetup
 
     enum Step: Int, CaseIterable {
         case keyboardSetup   // step 2 — "Let's Unlock your Voice"

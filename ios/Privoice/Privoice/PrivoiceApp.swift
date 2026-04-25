@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct PrivoiceApp: App {
@@ -9,6 +10,7 @@ struct PrivoiceApp: App {
             RootView()
                 .environment(appState)
                 .task { await appState.bootstrap() }
+                .onOpenURL { GIDSignIn.sharedInstance.handle($0) }
         }
     }
 }

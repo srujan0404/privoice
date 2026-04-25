@@ -29,6 +29,33 @@ struct LoginView: View {
         @Bindable var vm = vm
 
         VStack(spacing: 20) {
+            Button {
+                Task { await vm.signInWithGoogle() }
+            } label: {
+                HStack(spacing: 10) {
+                    Image("GoogleLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
+                    Text("Continue with Google")
+                        .fontWeight(.medium)
+                        .foregroundStyle(.primary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(.background, in: .rect(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.gray.opacity(0.3), lineWidth: 1))
+            }
+            .disabled(vm.isSubmitting)
+            .padding(.horizontal)
+
+            HStack(spacing: 8) {
+                Rectangle().fill(.gray.opacity(0.25)).frame(height: 1)
+                Text("or").font(.caption).foregroundStyle(.secondary)
+                Rectangle().fill(.gray.opacity(0.25)).frame(height: 1)
+            }
+            .padding(.horizontal)
+
             Picker("", selection: $vm.mode) {
                 Text("Sign In").tag(AuthViewModel.Mode.signIn)
                 Text("Register").tag(AuthViewModel.Mode.register)

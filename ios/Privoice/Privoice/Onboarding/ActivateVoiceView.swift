@@ -5,7 +5,7 @@ import SwiftUI
 /// iOS native keyboard before the user switches), and the user's actual
 /// keyboard summoned at the bottom via a hidden first-responder text field.
 /// The teaching gesture: long-press 🌐 in the real keyboard to switch to
-/// PocketVoice. Advances when any text is typed via the real keyboard, or
+/// Privoice. Advances when any text is typed via the real keyboard, or
 /// when the user taps the mock keyboard graphic.
 struct ActivateVoiceView: View {
     let onNext: () -> Void
@@ -38,7 +38,7 @@ struct ActivateVoiceView: View {
                 .foregroundStyle(Color(.systemGray))
                 .padding(.top, 10)
 
-                Text("PocketVoice. Always one press away.")
+                Text("Privoice. Always one press away.")
                     .font(AppFont.regular(15))
                     .foregroundStyle(Color(.systemGray))
 

@@ -12,7 +12,7 @@ struct SnippetsEmptyView: View {
                 .padding(.bottom, 10)
 
             VStack(spacing: 2) {
-                Text("Say it short, Pocket voice types it long.")
+                Text("Say it short, Privoice types it long.")
                 Text("Add a phrase and what it should expand to.")
             }
             .font(AppFont.regular(15))

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Onboarding step 4 — "Pocket Voice is Alive!" interstitial. Black canvas with
+/// Onboarding step 4 — "Privoice is Alive!" interstitial. Black canvas with
 /// a centered headline + 40%-opacity subtitle, and a full-width white capsule
 /// "Let's Go!" CTA at the bottom that advances the flow.
 struct AllSetView: View {
@@ -35,7 +35,7 @@ struct AllSetView: View {
 
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Text("Pocket Voice\nis Alive!")
+            Text("Privoice\nis Alive!")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .tracking(-0.6)
                 .lineSpacing(42 - 40)

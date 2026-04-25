@@ -17,7 +17,7 @@ struct HistoryEmptyView: View {
                 .tracking(-0.4)
                 .foregroundStyle(Color(red: 0x0A / 255.0, green: 0x0A / 255.0, blue: 0x0A / 255.0))
 
-            Text("Your pocket voice history will appear here once you start sending messages.")
+            Text("Your privoice history will appear here once you start sending messages.")
                 .font(AppFont.regular(15))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

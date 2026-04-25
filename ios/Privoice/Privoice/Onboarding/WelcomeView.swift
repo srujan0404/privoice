@@ -30,7 +30,7 @@ struct WelcomeView: View {
 
     private var bodySection: some View {
         VStack(spacing: 12) {
-            Text("PocketVoice")
+            Text("Privoice")
                 .font(AppFont.semibold(18))
                 .foregroundStyle(Color(.systemGray))
 

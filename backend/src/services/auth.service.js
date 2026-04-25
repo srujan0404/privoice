@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
+import { OAuth2Client } from 'google-auth-library';
 import { env } from '../config/env.js';
 import { User } from '../models/user.js';
 import { RefreshToken } from '../models/refreshToken.js';
@@ -6,6 +8,7 @@ import { AuthError } from '../utils/errors.js';
 import { signAccessToken, generateRefreshToken, hashRefreshToken } from './token.service.js';
 
 const DUMMY_PASSWORD_HASH = bcrypt.hashSync('not-a-real-password', env.BCRYPT_ROUNDS);
+const googleAuthClient = new OAuth2Client();
 
 /**
  * @param {{ email: string, password: string, displayName: string }} input
@@ -75,6 +78,45 @@ export async function refresh(input) {
   const user = await User.findById(row.userId);
   if (!user) throw new AuthError('AUTH_TOKEN_INVALID', 'Refresh token is invalid.');
 
+  return issueTokens(user);
+}
+
+/**
+ * Verify a Google-issued iOS ID token, then either link it to an existing
+ * email-matched account or provision a new one. Returns the standard
+ * access/refresh pair so the iOS client treats it identically to /login.
+ * @param {{ idToken: string }} input
+ */
+export async function googleLogin(input) {
+  let payload;
+  try {
+    const ticket = await googleAuthClient.verifyIdToken({
+      idToken: input.idToken,
+      audience: env.GOOGLE_OAUTH_IOS_CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch {
+    throw new AuthError('AUTH_GOOGLE_INVALID_TOKEN', 'Google sign-in token is invalid or expired.');
+  }
+  if (!payload || !payload.sub || !payload.email || !payload.email_verified) {
+    throw new AuthError('AUTH_GOOGLE_INVALID_TOKEN', 'Google account email is not verified.');
+  }
+
+  const email = payload.email.toLowerCase();
+  const googleSub = payload.sub;
+  const displayName = (payload.name && payload.name.trim()) || email.split('@')[0];
+
+  let user = await User.findOne({ $or: [{ googleSub }, { email }] });
+  if (user) {
+    if (!user.googleSub) {
+      user.googleSub = googleSub;
+      await user.save();
+    }
+  } else {
+    // Random unguessable password so password login can never succeed for a Google-provisioned account.
+    const passwordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), env.BCRYPT_ROUNDS);
+    user = await User.create({ email, displayName, googleSub, passwordHash });
+  }
   return issueTokens(user);
 }
 

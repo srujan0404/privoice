@@ -52,7 +52,7 @@ struct NewSnippetView: View {
                     }
 
                     fieldSection(
-                        title: "Pockets will type",
+                        title: "Privoice will type",
                         placeholder: "Eg. 7420 Evergreen Terrace, Springfield, IL 62702"
                     ) {
                         expansionEditor

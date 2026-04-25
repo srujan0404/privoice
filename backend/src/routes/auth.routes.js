@@ -2,8 +2,14 @@ import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { validateBody } from '../middleware/validate.js';
 import { ipLimiter } from '../middleware/rateLimit.js';
-import { RegisterSchema, LoginSchema, RefreshSchema, LogoutSchema } from '../schemas/auth.schema.js';
-import { register, login, refresh, logout } from '../services/auth.service.js';
+import {
+  RegisterSchema,
+  LoginSchema,
+  RefreshSchema,
+  LogoutSchema,
+  GoogleLoginSchema,
+} from '../schemas/auth.schema.js';
+import { register, login, refresh, logout, googleLogin } from '../services/auth.service.js';
 
 export const authRouter = Router();
 
@@ -26,6 +32,16 @@ authRouter.post(
   validateBody(LoginSchema),
   asyncHandler(async (req, res) => {
     const result = await login(req.body);
+    res.json(result);
+  }),
+);
+
+authRouter.post(
+  '/google',
+  loginLimit,
+  validateBody(GoogleLoginSchema),
+  asyncHandler(async (req, res) => {
+    const result = await googleLogin(req.body);
     res.json(result);
   }),
 );

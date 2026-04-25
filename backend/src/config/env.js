@@ -21,6 +21,8 @@ const EnvSchema = z.object({
 
   POLISH_CACHE_MAX: z.coerce.number().int().positive().default(1000),
   POLISH_CACHE_TTL_MS: z.coerce.number().int().positive().default(3_600_000),
+
+  GOOGLE_OAUTH_IOS_CLIENT_ID: z.string().min(1),
 });
 
 const parsed = EnvSchema.safeParse(process.env);

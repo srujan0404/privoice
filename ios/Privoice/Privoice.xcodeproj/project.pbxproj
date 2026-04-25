@@ -11,6 +11,7 @@
 		CD0BB5352F99752600AE5074 /* PrivoiceCore in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB5342F99752600AE5074 /* PrivoiceCore */; };
 		CD0BB5372F99754400AE5074 /* PrivoiceCore in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB5362F99754400AE5074 /* PrivoiceCore */; };
 		CD0BB55D2F9AB7CE00AE5074 /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB55C2F9AB7CE00AE5074 /* KeyboardKit */; };
+		CD0BB6D02F9D46E900AE5074 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = CD0BB6CF2F9D46E900AE5074 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,13 @@
 			);
 			target = CD0BB5242F9972E300AE5074 /* PrivoiceKeyboard */;
 		};
+		CD0BB6D12F9D470000AE5074 /* Exceptions for "Privoice" folder in "Privoice" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CD97577C2F99706B001A428C /* Privoice */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +92,7 @@
 			files = (
 				CD0BB55D2F9AB7CE00AE5074 /* KeyboardKit in Frameworks */,
 				CD0BB5352F99752600AE5074 /* PrivoiceCore in Frameworks */,
+				CD0BB6D02F9D46E900AE5074 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +173,7 @@
 			packageProductDependencies = (
 				CD0BB5342F99752600AE5074 /* PrivoiceCore */,
 				CD0BB55C2F9AB7CE00AE5074 /* KeyboardKit */,
+				CD0BB6CF2F9D46E900AE5074 /* GoogleSignIn */,
 			);
 			productName = Privoice;
 			productReference = CD97577D2F99706B001A428C /* Privoice.app */;
@@ -198,6 +208,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CD0BB55B2F9AB7CE00AE5074 /* XCRemoteSwiftPackageReference "KeyboardKit" */,
+				CD0BB6CE2F9D46E900AE5074 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CD97577E2F99706B001A428C /* Products */;
@@ -449,6 +460,7 @@
 				DEVELOPMENT_TEAM = R2YX95HRQD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Privoice/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Privoice uses your microphone to transcribe speech inside the Privoice keyboard. Your audio is never stored on our servers";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Privoice uses on-device speech recognition to turn your voice into text";
@@ -490,6 +502,7 @@
 				DEVELOPMENT_TEAM = R2YX95HRQD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Privoice/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Privoice uses your microphone to transcribe speech inside the Privoice keyboard. Your audio is never stored on our servers";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Privoice uses on-device speech recognition to turn your voice into text";
@@ -561,6 +574,14 @@
 				minimumVersion = 10.4.1;
 			};
 		};
+		CD0BB6CE2F9D46E900AE5074 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -576,6 +597,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CD0BB55B2F9AB7CE00AE5074 /* XCRemoteSwiftPackageReference "KeyboardKit" */;
 			productName = KeyboardKit;
+		};
+		CD0BB6CF2F9D46E900AE5074 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0BB6CE2F9D46E900AE5074 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

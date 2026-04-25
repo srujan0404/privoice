@@ -13,6 +13,7 @@ public enum AuthAPI {
     }
     public struct RefreshBody: Encodable { public let refreshToken: String }
     public struct LogoutBody: Encodable { public let refreshToken: String }
+    public struct GoogleLoginBody: Encodable { public let idToken: String }
 
     public static func register(email: String, password: String, displayName: String) async throws -> AuthResponse {
         try await APIClient.shared.unauthed(
@@ -26,6 +27,14 @@ public enum AuthAPI {
         try await APIClient.shared.unauthed(
             "POST", "auth/login",
             body: LoginBody(email: email, password: password),
+            response: AuthResponse.self
+        )
+    }
+
+    public static func googleLogin(idToken: String) async throws -> AuthResponse {
+        try await APIClient.shared.unauthed(
+            "POST", "auth/google",
+            body: GoogleLoginBody(idToken: idToken),
             response: AuthResponse.self
         )
     }

@@ -17,6 +17,10 @@ export const RefreshSchema = z.object({
 
 export const LogoutSchema = RefreshSchema;
 
+export const GoogleLoginSchema = z.object({
+  idToken: z.string().min(10).max(4096),
+});
+
 export const UpdateMeSchema = z.object({
   displayName: z.string().trim().min(1).max(80),
 });

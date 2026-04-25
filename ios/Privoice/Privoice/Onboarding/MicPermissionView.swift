@@ -97,7 +97,7 @@ struct MicPermissionView: View {
                     .foregroundStyle(.black)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Pocket voice requires microphone access to transcribe speech to text.")
+                Text("Privoice requires microphone access to transcribe speech to text.")
                     .font(.system(size: 17))
                     .tracking(-0.43)
                     .foregroundStyle(Self.cardBodyGray)

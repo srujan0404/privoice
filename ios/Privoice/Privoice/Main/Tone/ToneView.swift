@@ -12,7 +12,7 @@ struct ToneView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("General Tone Preferences")
                             .font(AppFont.semibold(17))
-                        Text("Pocket voice sounds like this everywhere.")
+                        Text("Privoice sounds like this everywhere.")
                             .font(AppFont.regular(14))
                             .foregroundStyle(.secondary)
                     }
