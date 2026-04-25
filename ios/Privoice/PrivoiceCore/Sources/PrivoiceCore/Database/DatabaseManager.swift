@@ -89,4 +89,15 @@ public final class DatabaseManager: @unchecked Sendable {
 
         try migrator.migrate(dbPool)
     }
+
+    /// Truncate every user-scoped table. Called when the active user changes so
+    /// the previous account's history/notes/snippets/vocab don't leak.
+    public func wipeAllData() throws {
+        try dbPool.write { db in
+            try db.execute(sql: "DELETE FROM messages")
+            try db.execute(sql: "DELETE FROM notes")
+            try db.execute(sql: "DELETE FROM snippets")
+            try db.execute(sql: "DELETE FROM vocab")
+        }
+    }
 }

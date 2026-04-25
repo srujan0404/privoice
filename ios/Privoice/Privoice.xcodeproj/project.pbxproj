@@ -72,6 +72,9 @@
 		};
 		CD97577F2F99706B001A428C /* Privoice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CD0BB6D12F9D470000AE5074 /* Exceptions for "Privoice" folder in "Privoice" target */,
+			);
 			path = Privoice;
 			sourceTree = "<group>";
 		};

@@ -1,4 +1,5 @@
 import SwiftUI
+import PrivoiceCore
 
 /// Container that drives the post-auth onboarding flow (steps 2–7 of the
 /// brief — step 1 is `WelcomeView` shown to unauthenticated users). Each
@@ -32,8 +33,14 @@ struct OnboardingFlow: View {
                 TryVoiceView(onNext: complete)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: step)
-        .transition(.opacity)
+        .id(step)
+        .transition(.asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .leading).combined(with: .opacity)
+        ))
+        .animation(.smooth(duration: 0.45, extraBounce: 0.05), value: step)
+        .onAppear { OnboardingFlags.suppressHistory = true }
+        .onDisappear { OnboardingFlags.suppressHistory = false }
     }
 
     private func advance() {

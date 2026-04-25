@@ -103,6 +103,7 @@ final class KeyboardViewController: KeyboardInputViewController {
     }
 
     private nonisolated func recordMessage(raw: String, polished: String, tone: Tone) {
+        guard !OnboardingFlags.suppressHistory else { return }
         let now = Date()
         let message = Message(
             polishedText: polished,
