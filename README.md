@@ -47,7 +47,7 @@ The full state machine of the Privoice keyboard, end-to-end:
 
 | Correction | Polished output |
 |---|---|
-| ![Correction](docs/screenshots/keyboard/correction.png) | ![Transcribed](docs/screenshots/keyboard/transcribed.png) |
+| ![Correction](docs/screenshots/keyboard/correction.png) | ![Transcribed](docs/screenshots/keyboard/transcribed_new.png) |
 
 ---
 
